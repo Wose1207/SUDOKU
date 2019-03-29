@@ -1,6 +1,7 @@
 import numpy as np
 from math import *
 
+chiffresPossibles = (1, 2, 3, 4, 5, 6, 7, 8, 9)
 def resolution(grille):
     "Entrée: grille(ndarray), Renvoie la grille de sudoku remplie"
     ValeurDansCase(0, grille)#Remplit chaque case du sudoku
