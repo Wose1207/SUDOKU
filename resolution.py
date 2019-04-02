@@ -9,8 +9,6 @@ def resolution(grille):
     ValeurDansCase(0, grille)#Remplit chaque case du sudoku
     return grille
 
-S=np.array([[0,0,4,6,7,9,8,0,0], [2,6,0,0,0,8,0,0,0], [0,0,0,0,5,0,4,0,0], [9,2,0,0,0,5,1,8,4], [0,4,0,2,0,1,0,9,0], [1,8,6,9,0,0,0,2,5], [0,0,1,0,9,0,0,0,0], [0,0,0,5,0,0,0,4,8], [0,0,3,7,2,4,6,0,0]])
-
 def AbsLigne(k, i, grille):
     "Entrées: k(int), i(int), grille(ndarray), renvoie un boleen qui indique si la valeur k est presente ou non dans la ligne i de la grille"
     for j in range(9):
@@ -82,34 +80,37 @@ def aide(grilleComplete, grilleVide):
         for colone in range(9):
             if grilleVide[ligne, colone]==0:
                 casesVides.append((ligne, colone))
+    if len(casesVides)==0:
+        return grilleComplete
     solution=randint(0, len(casesVides)-1)
-    print(solution)
     (ligne, colone)=casesVides[solution]
     grilleVide[ligne, colone]=grilleComplete[ligne, colone]
     return grilleVide
 
 
-def nombreSolution(grille):
-    "Entree: grille(ndarray), renvoie le nombre de solution d'une grille de sudoku"
-    global nombreSol
-    nombreSol=0
+def nbeSol(grille):
+    "Entrées: grille(ndarray), renvoie le nombre de solutions de cette grille de sudoku"
+    global nombreSolution
+    nombreSolution=0
+    "Entree: grille(ndarray), renvoie le nombre de solutions d'une grille de sudoku"
     grillesPossibles(0, grille)
-    return nombreSol
-
+    return nombreSolution
+    
 
 def grillesPossibles(i, grille):
-    "Entree: i(int), decalage(int),grille(ndarray), remplit la grille par recurrence case par case. Puis recommence avec un decalage pour trouver le nombre de solutions de la grille. On se repere avec i entre 0 et 80 pour les 81 valeurs de la case"
-    if i==81:#On est arrive au bout de la grille mais on reitere pour retrouver toutes les grilles possibles
-        nombreSol+=1
-        return True
+    "Entree: i(int), decalage(int),grille(ndarray), nbeSol(int),` remplit la grille par recurrence case par case. Puis recommence avec un decalage pour trouver le nombre de solutions de la grille. On se repere avec i entre 0 et 80 pour les 81 valeurs de la case"
+    global nombreSolution
     ligne=i//9
     colone=i%9
+    if i==81:#On est arrive au bout de la grille mais on reitere pour retrouver toutes les grilles possibles
+        nombreSolution+=1
+        return False
     if grille[ligne, colone]!=0:#Si la valeur est 0, cette case reste a remplir, sinon on teste la case d'apres
-        return ValeurDansCase(i+1, grille)
+        return grillesPossibles(i+1, grille)
     for nombre in range(1, 10):#On teste les nombres possibles dans cette case
         if AbsCar(nombre, ligne, colone, grille) and AbsCol(nombre, colone, grille) and AbsLigne(nombre, ligne, grille):#On teste la validite du nombre dans cette case
             grille[ligne, colone]=nombre#Si nombre est valide on le teste
-            if ValeurDansCase(i+1, grille):#On remplit la case avec nombre pour voir si c'est valide
+            if grillesPossibles(i+1, grille):#On remplit la case avec nombre pour voir si c'est valide
                 return True
     grille[ligne, colone]=0
     return False
